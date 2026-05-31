@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COD Algeria — ERP Simulator</title>
+    <style>
+        :root {
+            --dz-green: #006233;
+            --dz-green-light: #059669;
+            --dz-gold: #FFD700;
+            --bg-dark: #0b1120;
+            --bg-panel: #151e32;
+            --bg-card: #0f172a;
+            --border: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 32px 0 24px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--dz-green), var(--dz-gold), var(--dz-green), transparent);
+            border-radius: 2px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--dz-green), var(--dz-green-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 98, 51, 0.4);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-top: 4px;
+        }
+
+        /* Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1100px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--bg-panel);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+
+        .panel-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title svg {
+            width: 22px;
+            height: 22px;
+            color: var(--dz-green-light);
+        }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-auto { background: rgba(16, 185, 129, 0.15); color: var(--accent); }
+        .tag-usd { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+        .tag-dzd { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .tag-pct { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--dz-green-light);
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.15);
+        }
+
+        input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .input-suffix {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 22px 0;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--dz-green), var(--dz-green-light));
+            color: white;
+            box-shadow: 0 4px 16px rgba(0, 98, 51, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 98, 51, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--dz-green-light);
+            color: #fff;
+        }
+
+        /* Funnel */
+        .funnel-container {
+            margin-bottom: 28px;
+        }
+
+        .funnel-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .funnel-bar-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .funnel-bar {
+            height: 52px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            color: #fff;
+            font-weight: 700;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 100px;
+        }
+
+        .funnel-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+            pointer-events: none;
+        }
+
+        .bar-cmds { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .bar-conf { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .bar-livr { background: linear-gradient(135deg, var(--dz-green), var(--dz-green-light)); }
+
+        .funnel-info {
+            min-width: 90px;
+            text-align: right;
+        }
+
+        .funnel-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .funnel-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .funnel-pct {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .arrow-down {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin: -8px 0 6px 106px;
+            opacity: 0.5;
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 22px;
+            border: 1.5px solid var(--border);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--dz-green-light);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .kpi-card:hover::before { opacity: 1; }
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--dz-green-light);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .kpi-badge {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .kpi-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .kpi-value.positive { color: var(--accent); }
+        .kpi-value.negative { color: var(--danger); }
+        .kpi-value.warning { color: var(--warning); }
+        .kpi-value.info { color: var(--info); }
+
+        .kpi-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* Break Even Section */
+        .be-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1.5px solid var(--border);
+            margin-top: 24px;
+        }
+
+        .be-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .be-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .be-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .be-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .be-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .be-item {
+            background: var(--bg-panel);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid var(--border);
+        }
+
+        .be-item-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .be-item-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            font-family: 'SF Mono', monospace;
+        }
+
+        /* Progress bar for BEP */
+        .progress-wrap {
+            margin-top: 12px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-panel);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+            background: linear-gradient(90deg, var(--dz-green), var(--dz-green-light));
+        }
+
+        .progress-fill.danger {
+            background: linear-gradient(90deg, var(--danger), #dc2626);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Table */
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--bg-panel);
+            color: var(--text-muted);
+            font-weight: 700;
+            text-align: left;
+            padding: 14px 18px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .td-right { text-align: right; font-family: 'SF Mono', monospace; }
+        .td-positive { color: var(--accent); }
+        .td-negative { color: var(--danger); }
+        .td-warning { color: var(--warning); }
+
+        /* Alert */
+        .alert {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .alert.show { display: flex; }
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--warning);
+        }
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer-brand {
+            font-weight: 700;
+            color: var(--dz-green-light);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 100;
+            border: 1px solid var(--border);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel { animation: fadeIn 0.5s ease; }
+        .kpi-card { animation: fadeIn 0.5s ease backwards; }
+        .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+        .kpi-card:nth-child(2) { animation-delay: 0.15s; }
+        .kpi-card:nth-child(3) { animation-delay: 0.2s; }
+        .kpi-card:nth-child(4) { animation-delay: 0.25s; }
+        .kpi-card:nth-child(5) { animation-delay: 0.3s; }
+        .kpi-card:nth-child(6) { animation-delay: 0.35s; }
+
+        /* Print */
+        @media print {
+            body { background: white; color: black; }
+            .panel { border: 1px solid #ddd; box-shadow: none; }
+            .btn-group { display: none; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">COD</div>
+                <div>
+                    <h1>ERP Simulator</h1>
+                    <div class="subtitle">Cash on Delivery — Algeria Edition</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <!-- INPUTS PANEL -->
+            <div class="panel">
+                <div class="panel-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    Paramètres
+                </div>
+
+                <div class="section-label">Stock & Commandes</div>
+
+                <div class="input-group">
+                    <label>Stock Disponible <span class="tag tag-dzd">Unités</span></label>
+                    <div class="input-wrap">
+                        <input type="number" id="stock" value="500" min="0">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Nombre de Commandes <span class="tag tag-dzd">Unités</span></label>
+                    <div class="input-wrap">
+                        <input type="number" id="commandes" value="200" min="0">
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+                <div class="section-label">Finances</div>
+
+                <div class="input-group">
+                    <label>Dépenses Publicitaires <span class="tag tag-usd">USD</span></label>
+                    <div class="input-wrap">
+                        <input type="number" id="depensesPub" value="300" min="0" step="0.01">
+                        <span class="input-suffix">$</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>CPR (Cost Per Result) <span class="tag tag-auto">Auto</span> <span class="tag tag-usd">USD</span></label>
+                    <div class="input-wrap">
+                        <input type="number" id="cpr" disabled>
+                        <span class="input-suffix">$</span>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Prix Vente Unitaire <span class="tag tag-dzd">DZD</span></label>
+                        <div class="input-wrap">
+                            <input type="number" id="prixVente" value="3500" min="0">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Coût Produit <span class="tag tag-dzd">DZD</span></label>
+                        <div class="input-wrap">
+                            <input type="number" id="coutProduit" value="1200" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+                <div class="section-label">Logistique</div>
+
+                <div class="input-group">
+                    <label>Prix Emballage (Confirmés) <span class="tag tag-dzd">DZD</span></label>
+                    <div class="input-wrap">
+                        <input type="number" id="prixEmbalage" value="50" min="0">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Confirmation / Suivi (Livrés) <span class="tag tag-dzd">DZD</span></label>
+                    <div class="input-wrap">
+                        <input type="number" id="prixConfirmation" value="150" min="0">
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+                <div class="section-label">Taux & Conversion</div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Taux Confirmation <span class="tag tag-pct">%</span></label>
+                        <div class="input-wrap">
+                            <input type="number" id="tauxConf" value="65" min="0" max="100">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Taux Livraison <span class="tag tag-pct">%</span></label>
+                        <div class="input-wrap">
+                            <input type="number" id="tauxLiv" value="75" min="0" max="100">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Taux de Change <span class="tag tag-dzd">DZD/USD</span></label>
+                    <div class="input-wrap">
+                        <input type="number" id="tauxChange" value="255" min="0">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="resetForm()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Reset
+                    </button>
+                    <button class="btn btn-primary" onclick="window.print()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Imprimer
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESULTS PANEL -->
+            <div>
+                <!-- Alerts -->
+                <div id="alertStock" class="alert alert-warning">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <span>Stock insuffisant ! Vous avez besoin de <strong id="stockNeeded">0</strong> unités pour couvrir les livraisons.</span>
+                </div>
+
+                <div id="alertBEP" class="alert alert-danger">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Marge négative ! Vous perdez de l'argent sur chaque unité vendue. BEP impossible.</span>
+                </div>
+
+                <!-- Funnel -->
+                <div class="panel funnel-container">
+                    <div class="panel-title">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                        Pipeline Commandes
+                    </div>
+
+                    <div class="funnel-step">
+                        <div class="funnel-info">
+                            <div class="funnel-label">Commandes</div>
+                            <div class="funnel-value" id="f-cmds">200</div>
+                        </div>
+                        <div class="funnel-bar-wrap">
+                            <div class="funnel-bar bar-cmds" id="bar-cmds" style="width: 100%">
+                                <span>100%</span>
+                                <span id="f-cmds-pct">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="arrow-down">↓</div>
+
+                    <div class="funnel-step">
+                        <div class="funnel-info">
+                            <div class="funnel-label">Confirmées</div>
+                            <div class="funnel-value" id="f-conf">130</div>
+                            <div class="funnel-pct" id="f-conf-pct">65%</div>
+                        </div>
+                        <div class="funnel-bar-wrap">
+                            <div class="funnel-bar bar-conf" id="bar-conf" style="width: 65%">
+                                <span id="bar-conf-label">65%</span>
+                                <span id="f-conf-rate">-35%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="arrow-down">↓</div>
+
+                    <div class="funnel-step">
+                        <div class="funnel-info">
+                            <div class="funnel-label">Livrées</div>
+                            <div class="funnel-value" id="f-livr">98</div>
+                            <div class="funnel-pct" id="f-livr-pct">48.8%</div>
+                        </div>
+                        <div class="funnel-bar-wrap">
+                            <div class="funnel-bar bar-livr" id="bar-livr" style="width: 48.8%">
+                                <span id="bar-livr-label">48.8%</span>
+                                <span id="f-livr-rate">-25%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Revenus (Livrés)</div>
+                            <div class="kpi-badge" style="background: rgba(16,185,129,0.15); color: var(--accent);">DZD</div>
+                        </div>
+                        <div class="kpi-value positive" id="kpi-revenue">0</div>
+                        <div class="kpi-sub">Basé sur <span id="kpi-liv-units">0</span> unités livrées</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Coût Produit (Livrés)</div>
+                            <div class="kpi-badge" style="background: rgba(239,68,68,0.15); color: var(--danger);">DZD</div>
+                        </div>
+                        <div class="kpi-value negative" id="kpi-cout-prod">0</div>
+                        <div class="kpi-sub">Stock restant: <span id="kpi-stock-rest">0</span></div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Dépenses Pub</div>
+                            <div class="kpi-badge" style="background: rgba(59,130,246,0.15); color: var(--info);">USD</div>
+                        </div>
+                        <div class="kpi-value info" id="kpi-depenses">$0</div>
+                        <div class="kpi-sub" id="kpi-depenses-dzd">= 0 DZD</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Profit Net Total</div>
+                            <div class="kpi-badge" style="background: rgba(16,185,129,0.15); color: var(--accent);">DZD</div>
+                        </div>
+                        <div class="kpi-value" id="kpi-profit">0</div>
+                        <div class="kpi-sub" id="kpi-profit-margin">Marge: 0%</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Profit / Unité</div>
+                            <div class="kpi-badge" style="background: rgba(139,92,246,0.15); color: #a78bfa;">DZD</div>
+                        </div>
+                        <div class="kpi-value" id="kpi-profit-unit">0</div>
+                        <div class="kpi-sub">Par unité livrée</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Taux Effectif Livraison</div>
+                            <div class="kpi-badge" style="background: rgba(245,158,11,0.15); color: var(--warning);">%</div>
+                        </div>
+                        <div class="kpi-value warning" id="kpi-taux-eff">0%</div>
+                        <div class="kpi-sub">Conf × Livraison</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">ROAS</div>
+                            <div class="kpi-badge" style="background: rgba(16,185,129,0.15); color: var(--accent);">x</div>
+                        </div>
+                        <div class="kpi-value" id="kpi-roas">0x</div>
+                        <div class="kpi-sub">Return on Ad Spend</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">CPR Réel</div>
+                            <div class="kpi-badge" style="background: rgba(59,130,246,0.15); color: var(--info);">USD</div>
+                        </div>
+                        <div class="kpi-value info" id="kpi-cpr-real">$0</div>
+                        <div class="kpi-sub">Par commande confirmée</div>
+                    </div>
+                </div>
+
+                <!-- Break Even Section -->
+                <div class="be-section">
+                    <div class="be-header">
+                        <div class="be-icon">⚡</div>
+                        <div>
+                            <div class="be-title">Analyse Seuil de Rentabilité (BEP)</div>
+                            <div class="be-subtitle">Break Even Point — Point Mort</div>
+                        </div>
+                    </div>
+
+                    <div class="be-grid">
+                        <div class="be-item">
+                            <div class="be-item-label">BEP (Unités à Livrer)</div>
+                            <div class="be-item-value" id="be-bep">0</div>
+                            <div class="progress-wrap">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="be-progress" style="width: 0%"></div>
+                                </div>
+                                <div class="progress-label">
+                                    <span>Actuel: <span id="be-actuel">0</span></span>
+                                    <span id="be-pct">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="be-item">
+                            <div class="be-item-label">CPR CAP MAX (Seuil)</div>
+                            <div class="be-item-value" id="be-cpr-cap">$0</div>
+                            <div class="kpi-sub">CPR max acceptable</div>
+                        </div>
+
+                        <div class="be-item">
+                            <div class="be-item-label">Marge / Unité Livrée</div>
+                            <div class="be-item-value" id="be-marge">0 DZD</div>
+                            <div class="kpi-sub">Avant pub</div>
+                        </div>
+
+                        <div class="be-item">
+                            <div class="be-item-label">Coût Total / Unité</div>
+                            <div class="be-item-value" id="be-cout-total">0 DZD</div>
+                            <div class="kpi-sub">Incluant pub allouée</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Table -->
+                <div class="panel" style="margin-top: 24px;">
+                    <div class="panel-title">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        Détail des Calculs
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Poste</th>
+                                    <th style="text-align:right">Montant</th>
+                                    <th style="text-align:right">Devise</th>
+                                    <th style="text-align:right">Note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Revenus (Livrés)</td>
+                                    <td class="td-right td-positive" id="t-revenue">0</td>
+                                    <td class="td-right">DZD</td>
+                                    <td class="td-right" id="t-revenue-note">0 × 0</td>
+                                </tr>
+                                <tr>
+                                    <td>Coût Produit (Livrés)</td>
+                                    <td class="td-right td-negative" id="t-cout-prod">0</td>
+                                    <td class="td-right">DZD</td>
+                                    <td class="td-right" id="t-cout-prod-note">0 × 0</td>
+                                </tr>
+                                <tr>
+                                    <td>Coût Emballage (Confirmés)</td>
+                                    <td class="td-right td-negative" id="t-embalage">0</td>
+                                    <td class="td-right">DZD</td>
+                                    <td class="td-right" id="t-embalage-note">0 × 0</td>
+                                </tr>
+                                <tr>
+                                    <td>Coût Confirmation/Suivi (Livrés)</td>
+                                    <td class="td-right td-negative" id="t-confirm">0</td>
+                                    <td class="td-right">DZD</td>
+                                    <td class="td-right" id="t-confirm-note">0 × 0</td>
+                                </tr>
+                                <tr>
+                                    <td>Dépenses Publicitaires</td>
+                                    <td class="td-right td-negative" id="t-pub">0</td>
+                                    <td class="td-right">DZD</td>
+                                    <td class="td-right" id="t-pub-note">$0 × 0</td>
+                                </tr>
+                                <tr style="background: rgba(255,255,255,0.03);">
+                                    <td><strong>Profit Net Total</strong></td>
+                                    <td class="td-right" id="t-profit" style="font-weight:800; font-size:1.1rem;">0</td>
+                                    <td class="td-right"><strong>DZD</strong></td>
+                                    <td class="td-right" id="t-profit-note">—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <span class="footer-brand">COD Algeria ERP</span> — Simulateur de Rentabilité Cash on Delivery
+            <br>Conçu pour le marché Algérien · 1 USD = <span id="footer-rate">255</span> DZD
+        </footer>
+    </div>
+
+    <script>
+        // Format helpers
+        const fmt = (n) => new Intl.NumberFormat('fr-FR').format(Math.round(n));
+        const fmtDec = (n, d = 2) => new Intl.NumberFormat('fr-FR', {minimumFractionDigits: d, maximumFractionDigits: d}).format(n);
+        const fmtMoney = (n) => new Intl.NumberFormat('fr-FR').format(Math.round(n)) + ' DZD';
+        const fmtUSD = (n) => '$' + fmtDec(n, 2);
+
+        // DOM refs
+        const els = {
+            stock: document.getElementById('stock'),
+            commandes: document.getElementById('commandes'),
+            depensesPub: document.getElementById('depensesPub'),
+            cpr: document.getElementById('cpr'),
+            prixVente: document.getElementById('prixVente'),
+            coutProduit: document.getElementById('coutProduit'),
+            prixEmbalage: document.getElementById('prixEmbalage'),
+            prixConfirmation: document.getElementById('prixConfirmation'),
+            tauxConf: document.getElementById('tauxConf'),
+            tauxLiv: document.getElementById('tauxLiv'),
+            tauxChange: document.getElementById('tauxChange'),
+
+            // Funnel
+            fCmds: document.getElementById('f-cmds'),
+            fConf: document.getElementById('f-conf'),
+            fLivr: document.getElementById('f-livr'),
+            fConfPct: document.getElementById('f-conf-pct'),
+            fLivrPct: document.getElementById('f-livr-pct'),
+            barCmds: document.getElementById('bar-cmds'),
+            barConf: document.getElementById('bar-conf'),
+            barLivr: document.getElementById('bar-livr'),
+            barConfLabel: document.getElementById('bar-conf-label'),
+            barLivrLabel: document.getElementById('bar-livr-label'),
+            fConfRate: document.getElementById('f-conf-rate'),
+            fLivrRate: document.getElementById('f-livr-rate'),
+
+            // KPIs
+            kpiRevenue: document.getElementById('kpi-revenue'),
+            kpiLivUnits: document.getElementById('kpi-liv-units'),
+            kpiCoutProd: document.getElementById('kpi-cout-prod'),
+            kpiStockRest: document.getElementById('kpi-stock-rest'),
+            kpiDepenses: document.getElementById('kpi-depenses'),
+            kpiDepensesDzd: document.getElementById('kpi-depenses-dzd'),
+            kpiProfit: document.getElementById('kpi-profit'),
+            kpiProfitMargin: document.getElementById('kpi-profit-margin'),
+            kpiProfitUnit: document.getElementById('kpi-profit-unit'),
+            kpiTauxEff: document.getElementById('kpi-taux-eff'),
+            kpiRoas: document.getElementById('kpi-roas'),
+            kpiCprReal: document.getElementById('kpi-cpr-real'),
+
+            // BEP
+            beBep: document.getElementById('be-bep'),
+            beProgress: document.getElementById('be-progress'),
+            beActuel: document.getElementById('be-actuel'),
+            bePct: document.getElementById('be-pct'),
+            beCprCap: document.getElementById('be-cpr-cap'),
+            beMarge: document.getElementById('be-marge'),
+            beCoutTotal: document.getElementById('be-cout-total'),
+
+            // Table
+            tRevenue: document.getElementById('t-revenue'),
+            tRevenueNote: document.getElementById('t-revenue-note'),
+            tCoutProd: document.getElementById('t-cout-prod'),
+            tCoutProdNote: document.getElementById('t-cout-prod-note'),
+            tEmbalage: document.getElementById('t-embalage'),
+            tEmbalageNote: document.getElementById('t-embalage-note'),
+            tConfirm: document.getElementById('t-confirm'),
+            tConfirmNote: document.getElementById('t-confirm-note'),
+            tPub: document.getElementById('t-pub'),
+            tPubNote: document.getElementById('t-pub-note'),
+            tProfit: document.getElementById('t-profit'),
+            tProfitNote: document.getElementById('t-profit-note'),
+
+            // Alerts
+            alertStock: document.getElementById('alertStock'),
+            alertBEP: document.getElementById('alertBEP'),
+            stockNeeded: document.getElementById('stockNeeded'),
+            footerRate: document.getElementById('footer-rate'),
+        };
+
+        function calculate() {
+            const stock = parseFloat(els.stock.value) || 0;
+            const cmds = parseFloat(els.commandes.value) || 0;
+            const depensesPubUSD = parseFloat(els.depensesPub.value) || 0;
+            const pv = parseFloat(els.prixVente.value) || 0;
+            const cp = parseFloat(els.coutProduit.value) || 0;
+            const pe = parseFloat(els.prixEmbalage.value) || 0;
+            const pc = parseFloat(els.prixConfirmation.value) || 0;
+            const tc = (parseFloat(els.tauxConf.value) || 0) / 100;
+            const tl = (parseFloat(els.tauxLiv.value) || 0) / 100;
+            const tx = parseFloat(els.tauxChange.value) || 255;
+
+            // Core pipeline
+            const conf = cmds * tc;
+            const livr = conf * tl;
+            const tauxEff = tc * tl;
+
+            // Financials
+            const revenue = livr * pv;
+            const coutProdLivre = livr * cp;
+            const coutEmbalage = conf * pe;
+            const coutConfirm = livr * pc;
+            const depensesDZD = depensesPubUSD * tx;
+
+            const profitNet = revenue - coutProdLivre - coutEmbalage - coutConfirm - depensesDZD;
+            const profitUnit = livr > 0 ? profitNet / livr : 0;
+            const margePct = revenue > 0 ? (profitNet / revenue) * 100 : 0;
+
+            // CPR
+            const cprReal = conf > 0 ? depensesPubUSD / conf : 0;
+            els.cpr.value = cprReal > 0 ? fmtDec(cprReal, 2) : '—';
+
+            // ROAS
+            const roas = depensesDZD > 0 ? revenue / depensesDZD : 0;
+
+            // BEP Calculation
+            // Contribution margin per delivered unit (before ad spend)
+            // = PV - CP - PC - (PE / TL)
+            // Because to get 1 delivered, you need 1/TL confirmed, each costing PE
+            const margeUnitLivree = pv - cp - pc - (tl > 0 ? pe / tl : 0);
+            const bep = margeUnitLivree > 0 ? Math.ceil(depensesDZD / margeUnitLivree) : Infinity;
+
+            // CPR CAP MAX
+            // Max CPR per confirmed order to break even
+            // Expected profit per confirmed = TL*(PV - CP - PC) - PE
+            // CPR_CAP_DZD = expected profit per confirmed
+            // CPR_CAP_USD = CPR_CAP_DZD / TX
+            const expectedProfitPerConf = tl * (pv - cp - pc) - pe;
+            const cprCapUSD = tx > 0 && expectedProfitPerConf > 0 ? expectedProfitPerConf / tx : 0;
+
+            // Cost per unit including allocated ad spend
+            const coutTotalUnit = livr > 0 ? (coutProdLivre + coutEmbalage + coutConfirm + depensesDZD) / livr : 0;
+
+            // Stock alert
+            const stockRestant = stock - livr;
+            if (stockRestant < 0) {
+                els.alertStock.classList.add('show');
+                els.stockNeeded.textContent = fmt(Math.abs(stockRestant));
+            } else {
+                els.alertStock.classList.remove('show');
+            }
+
+            // BEP alert
+            if (margeUnitLivree <= 0) {
+                els.alertBEP.classList.add('show');
+            } else {
+                els.alertBEP.classList.remove('show');
+            }
+
+            // Update Funnel
+            els.fCmds.textContent = fmt(cmds);
+            els.fConf.textContent = fmt(Math.round(conf));
+            els.fLivr.textContent = fmt(Math.round(livr));
+            els.fConfPct.textContent = fmtDec(tc * 100, 1) + '%';
+            els.fLivrPct.textContent = fmtDec(tauxEff * 100, 1) + '%';
+
+            const confWidth = cmds > 0 ? (conf / cmds) * 100 : 0;
+            const livrWidth = cmds > 0 ? (livr / cmds) * 100 : 0;
+
+            els.barConf.style.width = Math.max(confWidth, 8) + '%';
+            els.barLivr.style.width = Math.max(livrWidth, 8) + '%';
+            els.barConfLabel.textContent = fmtDec(confWidth, 1) + '%';
+            els.barLivrLabel.textContent = fmtDec(livrWidth, 1) + '%';
+            els.fConfRate.textContent = cmds > 0 ? '-' + fmtDec(100 - confWidth, 1) + '%' : '—';
+            els.fLivrRate.textContent = conf > 0 ? '-' + fmtDec(100 - (livr/conf)*100, 1) + '%' : '—';
+
+            // Update KPIs
+            els.kpiRevenue.textContent = fmtMoney(revenue);
+            els.kpiLivUnits.textContent = fmt(Math.round(livr));
+            els.kpiCoutProd.textContent = fmtMoney(coutProdLivre);
+            els.kpiStockRest.textContent = fmt(Math.round(Math.max(0, stockRestant)));
+            els.kpiDepenses.textContent = fmtUSD(depensesPubUSD);
+            els.kpiDepensesDzd.textContent = '= ' + fmtMoney(depensesDZD);
+
+            els.kpiProfit.textContent = fmtMoney(profitNet);
+            els.kpiProfit.className = 'kpi-value ' + (profitNet >= 0 ? 'positive' : 'negative');
+            els.kpiProfitMargin.textContent = 'Marge: ' + fmtDec(margePct, 1) + '%';
+            els.kpiProfitMargin.style.color = margePct >= 0 ? 'var(--accent)' : 'var(--danger)';
+
+            els.kpiProfitUnit.textContent = fmtMoney(profitUnit);
+            els.kpiProfitUnit.className = 'kpi-value ' + (profitUnit >= 0 ? 'positive' : 'negative');
+
+            els.kpiTauxEff.textContent = fmtDec(tauxEff * 100, 1) + '%';
+
+            els.kpiRoas.textContent = fmtDec(roas, 2) + 'x';
+            els.kpiRoas.className = 'kpi-value ' + (roas >= 1 ? 'positive' : (roas >= 0.5 ? 'warning' : 'negative'));
+
+            els.kpiCprReal.textContent = fmtUSD(cprReal);
+
+            // Update BEP
+            if (bep === Infinity || bep <= 0 || margeUnitLivree <= 0) {
+                els.beBep.textContent = '∞';
+                els.beBep.style.color = 'var(--danger)';
+                els.beProgress.style.width = '0%';
+                els.beProgress.className = 'progress-fill danger';
+                els.bePct.textContent = '—';
+            } else {
+                els.beBep.textContent = fmt(bep);
+                els.beBep.style.color = 'var(--warning)';
+                const bepPct = Math.min((livr / bep) * 100, 100);
+                els.beProgress.style.width = bepPct + '%';
+                els.beProgress.className = 'progress-fill' + (bepPct >= 100 ? '' : ' danger');
+                els.bePct.textContent = fmtDec(bepPct, 1) + '%';
+            }
+            els.beActuel.textContent = fmt(Math.round(livr));
+
+            els.beCprCap.textContent = cprCapUSD > 0 ? fmtUSD(cprCapUSD) : '—';
+            els.beCprCap.style.color = cprCapUSD > 0 ? 'var(--warning)' : 'var(--danger)';
+
+            els.beMarge.textContent = fmtMoney(margeUnitLivree);
+            els.beMarge.style.color = margeUnitLivree >= 0 ? 'var(--accent)' : 'var(--danger)';
+
+            els.beCoutTotal.textContent = fmtMoney(coutTotalUnit);
+
+            // Update Table
+            els.tRevenue.textContent = fmtMoney(revenue);
+            els.tRevenueNote.textContent = fmt(Math.round(livr)) + ' × ' + fmt(pv);
+            els.tCoutProd.textContent = fmtMoney(coutProdLivre);
+            els.tCoutProdNote.textContent = fmt(Math.round(livr)) + ' × ' + fmt(cp);
+            els.tEmbalage.textContent = fmtMoney(coutEmbalage);
+            els.tEmbalageNote.textContent = fmt(Math.round(conf)) + ' × ' + fmt(pe);
+            els.tConfirm.textContent = fmtMoney(coutConfirm);
+            els.tConfirmNote.textContent = fmt(Math.round(livr)) + ' × ' + fmt(pc);
+            els.tPub.textContent = fmtMoney(depensesDZD);
+            els.tPubNote.textContent = fmtUSD(depensesPubUSD) + ' × ' + fmt(tx);
+
+            els.tProfit.textContent = fmtMoney(profitNet);
+            els.tProfit.className = 'td-right ' + (profitNet >= 0 ? 'td-positive' : 'td-negative');
+            els.tProfit.style.fontWeight = '800';
+            els.tProfit.style.fontSize = '1.1rem';
+            els.tProfitNote.textContent = profitNet >= 0 ? 'Rentable ✓' : 'Déficitaire ✗';
+            els.tProfitNote.style.color = profitNet >= 0 ? 'var(--accent)' : 'var(--danger)';
+
+            // Footer
+            els.footerRate.textContent = fmt(tx);
+        }
+
+        function resetForm() {
+            els.stock.value = 500;
+            els.commandes.value = 200;
+            els.depensesPub.value = 300;
+            els.prixVente.value = 3500;
+            els.coutProduit.value = 1200;
+            els.prixEmbalage.value = 50;
+            els.prixConfirmation.value = 150;
+            els.tauxConf.value = 65;
+            els.tauxLiv.value = 75;
+            els.tauxChange.value = 255;
+            calculate();
+        }
+
+        // Bind events
+        Object.values(els).forEach(el => {
+            if (el && el.tagName === 'INPUT') {
+                el.addEventListener('input', calculate);
+            }
+        });
+
+        // Initial calc
+        calculate();
+    </script>
+</body>
+</html>
