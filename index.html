@@ -630,6 +630,8 @@
         .kpi-card:nth-child(4) { animation-delay: 0.25s; }
         .kpi-card:nth-child(5) { animation-delay: 0.3s; }
         .kpi-card:nth-child(6) { animation-delay: 0.35s; }
+        .kpi-card:nth-child(7) { animation-delay: 0.4s; }
+        .kpi-card:nth-child(8) { animation-delay: 0.45s; }
 
         /* Print */
         @media print {
@@ -638,6 +640,7 @@
             .btn-group { display: none; }
         }
     </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -665,7 +668,7 @@
                 <div class="input-group">
                     <label>Stock Disponible <span class="tag tag-dzd">Unités</span></label>
                     <div class="input-wrap">
-                        <input type="number" id="stock" value="500" min="0">
+                        <input type="number" id="stock" value="100" min="0">
                     </div>
                 </div>
 
@@ -682,7 +685,7 @@
                 <div class="input-group">
                     <label>Dépenses Publicitaires <span class="tag tag-usd">USD</span></label>
                     <div class="input-wrap">
-                        <input type="number" id="depensesPub" value="300" min="0" step="0.01">
+                        <input type="number" id="depensesPub" value="100" min="0" step="0.01">
                         <span class="input-suffix">$</span>
                     </div>
                 </div>
@@ -699,13 +702,13 @@
                     <div class="input-group">
                         <label>Prix Vente Unitaire <span class="tag tag-dzd">DZD</span></label>
                         <div class="input-wrap">
-                            <input type="number" id="prixVente" value="3500" min="0">
+                            <input type="number" id="prixVente" value="5900" min="0">
                         </div>
                     </div>
                     <div class="input-group">
                         <label>Coût Produit <span class="tag tag-dzd">DZD</span></label>
                         <div class="input-wrap">
-                            <input type="number" id="coutProduit" value="1200" min="0">
+                            <input type="number" id="coutProduit" value="3400" min="0">
                         </div>
                     </div>
                 </div>
@@ -734,14 +737,14 @@
                     <div class="input-group">
                         <label>Taux Confirmation <span class="tag tag-pct">%</span></label>
                         <div class="input-wrap">
-                            <input type="number" id="tauxConf" value="65" min="0" max="100">
+                            <input type="number" id="tauxConf" value="70" min="0" max="100">
                             <span class="input-suffix">%</span>
                         </div>
                     </div>
                     <div class="input-group">
                         <label>Taux Livraison <span class="tag tag-pct">%</span></label>
                         <div class="input-wrap">
-                            <input type="number" id="tauxLiv" value="75" min="0" max="100">
+                            <input type="number" id="tauxLiv" value="70" min="0" max="100">
                             <span class="input-suffix">%</span>
                         </div>
                     </div>
@@ -771,12 +774,17 @@
                 <!-- Alerts -->
                 <div id="alertStock" class="alert alert-warning">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <span>Stock insuffisant ! Vous avez besoin de <strong id="stockNeeded">0</strong> unités pour couvrir les livraisons.</span>
+                    <span>Stock insuffisant ! Vous manquez de <strong id="stockNeeded">0</strong> unités pour couvrir les livraisons potentielles.</span>
                 </div>
 
                 <div id="alertBEP" class="alert alert-danger">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Marge négative ! Vous perdez de l'argent sur chaque unité vendue. BEP impossible.</span>
+                </div>
+
+                <div id="alertBEPImpossible" class="alert alert-danger">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>BEP impossible avec ce lot ! Vous avez besoin de <strong id="bepNeeded">0</strong> livraisons, mais vous ne pouvez en réaliser que <strong id="maxLivr">0</strong> avec vos commandes/stock actuels.</span>
                 </div>
 
                 <!-- Funnel -->
@@ -803,13 +811,13 @@
                     <div class="funnel-step">
                         <div class="funnel-info">
                             <div class="funnel-label">Confirmées</div>
-                            <div class="funnel-value" id="f-conf">130</div>
-                            <div class="funnel-pct" id="f-conf-pct">65%</div>
+                            <div class="funnel-value" id="f-conf">140</div>
+                            <div class="funnel-pct" id="f-conf-pct">70%</div>
                         </div>
                         <div class="funnel-bar-wrap">
-                            <div class="funnel-bar bar-conf" id="bar-conf" style="width: 65%">
-                                <span id="bar-conf-label">65%</span>
-                                <span id="f-conf-rate">-35%</span>
+                            <div class="funnel-bar bar-conf" id="bar-conf" style="width: 70%">
+                                <span id="bar-conf-label">70%</span>
+                                <span id="f-conf-rate">-30%</span>
                             </div>
                         </div>
                     </div>
@@ -819,12 +827,12 @@
                         <div class="funnel-info">
                             <div class="funnel-label">Livrées</div>
                             <div class="funnel-value" id="f-livr">98</div>
-                            <div class="funnel-pct" id="f-livr-pct">48.8%</div>
+                            <div class="funnel-pct" id="f-livr-pct">49%</div>
                         </div>
                         <div class="funnel-bar-wrap">
-                            <div class="funnel-bar bar-livr" id="bar-livr" style="width: 48.8%">
-                                <span id="bar-livr-label">48.8%</span>
-                                <span id="f-livr-rate">-25%</span>
+                            <div class="funnel-bar bar-livr" id="bar-livr" style="width: 49%">
+                                <span id="bar-livr-label">49%</span>
+                                <span id="f-livr-rate">-30%</span>
                             </div>
                         </div>
                     </div>
@@ -883,7 +891,7 @@
                             <div class="kpi-badge" style="background: rgba(245,158,11,0.15); color: var(--warning);">%</div>
                         </div>
                         <div class="kpi-value warning" id="kpi-taux-eff">0%</div>
-                        <div class="kpi-sub">Conf × Livraison</div>
+                        <div class="kpi-sub">% des commandes livrées</div>
                     </div>
 
                     <div class="kpi-card">
@@ -901,7 +909,7 @@
                             <div class="kpi-badge" style="background: rgba(59,130,246,0.15); color: var(--info);">USD</div>
                         </div>
                         <div class="kpi-value info" id="kpi-cpr-real">$0</div>
-                        <div class="kpi-sub">Par commande confirmée</div>
+                        <div class="kpi-sub">Par commande (toutes)</div>
                     </div>
                 </div>
 
@@ -911,7 +919,7 @@
                         <div class="be-icon">⚡</div>
                         <div>
                             <div class="be-title">Analyse Seuil de Rentabilité (BEP)</div>
-                            <div class="be-subtitle">Break Even Point — Point Mort</div>
+                            <div class="be-subtitle">Break Even Point — Point Mort (inclut tout le stock)</div>
                         </div>
                     </div>
 
@@ -933,19 +941,19 @@
                         <div class="be-item">
                             <div class="be-item-label">CPR CAP MAX (Seuil)</div>
                             <div class="be-item-value" id="be-cpr-cap">$0</div>
-                            <div class="kpi-sub">CPR max acceptable</div>
+                            <div class="kpi-sub">CPR max acceptable par confirmation</div>
                         </div>
 
                         <div class="be-item">
                             <div class="be-item-label">Marge / Unité Livrée</div>
                             <div class="be-item-value" id="be-marge">0 DZD</div>
-                            <div class="kpi-sub">Avant pub</div>
+                            <div class="kpi-sub">Avant pub (stock déjà acheté)</div>
                         </div>
 
                         <div class="be-item">
                             <div class="be-item-label">Coût Total / Unité</div>
                             <div class="be-item-value" id="be-cout-total">0 DZD</div>
-                            <div class="kpi-sub">Incluant pub allouée</div>
+                            <div class="kpi-sub">Inclut tout le stock + pub allouée</div>
                         </div>
                     </div>
                 </div>
@@ -1091,7 +1099,10 @@
             // Alerts
             alertStock: document.getElementById('alertStock'),
             alertBEP: document.getElementById('alertBEP'),
+            alertBEPImpossible: document.getElementById('alertBEPImpossible'),
             stockNeeded: document.getElementById('stockNeeded'),
+            bepNeeded: document.getElementById('bepNeeded'),
+            maxLivr: document.getElementById('maxLivr'),
             footerRate: document.getElementById('footer-rate'),
         };
 
@@ -1107,12 +1118,13 @@
             const tl = (parseFloat(els.tauxLiv.value) || 0) / 100;
             const tx = parseFloat(els.tauxChange.value) || 255;
 
-            // Core pipeline
+            // Core pipeline — cap deliveries at available stock
             const conf = cmds * tc;
-            const livr = conf * tl;
-            const tauxEff = tc * tl;
+            const potentialLivr = conf * tl;
+            const livr = Math.min(potentialLivr, stock);
+            const tauxEff = cmds > 0 ? livr / cmds : 0;
 
-            // Financials
+            // Financials (accounting profit: only delivered units count as COGS)
             const revenue = livr * pv;
             const coutProdLivre = livr * cp;
             const coutEmbalage = conf * pe;
@@ -1123,45 +1135,59 @@
             const profitUnit = livr > 0 ? profitNet / livr : 0;
             const margePct = revenue > 0 ? (profitNet / revenue) * 100 : 0;
 
-            // CPR
-            const cprReal = conf > 0 ? depensesPubUSD / conf : 0;
+            // CPR = Ad Spend / Total Orders (not confirmed)
+            const cprReal = cmds > 0 ? depensesPubUSD / cmds : 0;
             els.cpr.value = cprReal > 0 ? fmtDec(cprReal, 2) : '—';
 
             // ROAS
             const roas = depensesDZD > 0 ? revenue / depensesDZD : 0;
 
-            // BEP Calculation
-            // Contribution margin per delivered unit (before ad spend)
-            // = PV - CP - PC - (PE / TL)
-            // Because to get 1 delivered, you need 1/TL confirmed, each costing PE
-            const margeUnitLivree = pv - cp - pc - (tl > 0 ? pe / tl : 0);
-            const bep = margeUnitLivree > 0 ? Math.ceil(depensesDZD / margeUnitLivree) : Infinity;
+            // BEP Calculation — recover TOTAL inventory cost + ad spend
+            // Contribution margin per delivered unit (stock already paid = fixed cost)
+            // To get 1 delivered unit, you need 1/TL confirmed units, each costing PE
+            // So variable cost per delivered = PC + PE/TL
+            // Revenue per delivered = PV
+            // Contribution margin = PV - PC - PE/TL
+            const margeUnitLivree = tl > 0 ? pv - pc - (pe / tl) : -Infinity;
 
-            // CPR CAP MAX
-            // Max CPR per confirmed order to break even
-            // Expected profit per confirmed = TL*(PV - CP - PC) - PE
-            // CPR_CAP_DZD = expected profit per confirmed
-            // CPR_CAP_USD = CPR_CAP_DZD / TX
-            const expectedProfitPerConf = tl * (pv - cp - pc) - pe;
+            // Total fixed investment to recover = all stock cost + ad spend
+            const totalFixedCost = (stock * cp) + depensesDZD;
+            const bep = margeUnitLivree > 0 ? Math.ceil(totalFixedCost / margeUnitLivree) : Infinity;
+
+            // Max deliverable with current orders & stock
+            const maxDeliverable = Math.min(cmds * tc * tl, stock);
+
+            // CPR CAP MAX (per confirmed order)
+            // Expected profit per confirmed = TL*(PV - PC) - PE
+            // (CP is excluded because stock is already bought)
+            const expectedProfitPerConf = tl * (pv - pc) - pe;
             const cprCapUSD = tx > 0 && expectedProfitPerConf > 0 ? expectedProfitPerConf / tx : 0;
 
-            // Cost per unit including allocated ad spend
-            const coutTotalUnit = livr > 0 ? (coutProdLivre + coutEmbalage + coutConfirm + depensesDZD) / livr : 0;
+            // Cost per delivered unit including full stock allocation
+            const coutTotalUnit = livr > 0 ? (stock * cp + coutEmbalage + coutConfirm + depensesDZD) / livr : 0;
 
-            // Stock alert
-            const stockRestant = stock - livr;
-            if (stockRestant < 0) {
+            // Stock alert — when potential deliveries exceed stock
+            if (potentialLivr > stock) {
                 els.alertStock.classList.add('show');
-                els.stockNeeded.textContent = fmt(Math.abs(stockRestant));
+                els.stockNeeded.textContent = fmt(Math.ceil(potentialLivr - stock));
             } else {
                 els.alertStock.classList.remove('show');
             }
 
-            // BEP alert
+            // BEP negative margin alert
             if (margeUnitLivree <= 0) {
                 els.alertBEP.classList.add('show');
             } else {
                 els.alertBEP.classList.remove('show');
+            }
+
+            // BEP impossible alert (BEP > max deliverable)
+            if (bep !== Infinity && margeUnitLivree > 0 && bep > maxDeliverable) {
+                els.alertBEPImpossible.classList.add('show');
+                els.bepNeeded.textContent = fmt(Math.ceil(bep));
+                els.maxLivr.textContent = fmt(Math.floor(maxDeliverable));
+            } else {
+                els.alertBEPImpossible.classList.remove('show');
             }
 
             // Update Funnel
@@ -1185,7 +1211,7 @@
             els.kpiRevenue.textContent = fmtMoney(revenue);
             els.kpiLivUnits.textContent = fmt(Math.round(livr));
             els.kpiCoutProd.textContent = fmtMoney(coutProdLivre);
-            els.kpiStockRest.textContent = fmt(Math.round(Math.max(0, stockRestant)));
+            els.kpiStockRest.textContent = fmt(Math.round(Math.max(0, stock - livr)));
             els.kpiDepenses.textContent = fmtUSD(depensesPubUSD);
             els.kpiDepensesDzd.textContent = '= ' + fmtMoney(depensesDZD);
 
@@ -1253,15 +1279,15 @@
         }
 
         function resetForm() {
-            els.stock.value = 500;
+            els.stock.value = 100;
             els.commandes.value = 200;
-            els.depensesPub.value = 300;
-            els.prixVente.value = 3500;
-            els.coutProduit.value = 1200;
+            els.depensesPub.value = 100;
+            els.prixVente.value = 5900;
+            els.coutProduit.value = 3400;
             els.prixEmbalage.value = 50;
             els.prixConfirmation.value = 150;
-            els.tauxConf.value = 65;
-            els.tauxLiv.value = 75;
+            els.tauxConf.value = 70;
+            els.tauxLiv.value = 70;
             els.tauxChange.value = 255;
             calculate();
         }
